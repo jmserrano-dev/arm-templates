@@ -51,10 +51,7 @@
                     "linuxFxVersion": "DOCKER|nginx:alpine"
                 },
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('AppServicePlanName'))]"
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', parameters('AppServicePlanName'))]"
-            ]
+            }
         }
     ]
 }
