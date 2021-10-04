@@ -1,0 +1,60 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "AppServicePlanName": {
+            "type": "string"
+        },
+        "SiteName": {
+            "type": "string"
+        },
+        "AcrUrl": {
+            "type": "string"
+        },
+        "AcrUsername": {
+            "type": "string"
+        },
+        "AcrPassword": {
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2018-11-01",
+            "name": "[parameters('SiteName')]",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "displayName": "Web App"
+            },
+            "properties": {
+                "siteConfig": {
+                    "name": "[parameters('SiteName')]",
+                    "appSettings": [
+                        {
+                            "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+                            "value": "false"
+                        },
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_URL",
+                            "value": "[parameters('AcrUrl')]"
+                        },
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                            "value": "[parameters('AcrUsername')]"
+                        },
+                        {
+                            "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                            "value": "[parameters('AcrPassword')]"
+                        }
+                    ],
+                    "linuxFxVersion": "DOCKER|nginx:alpine"
+                },
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('AppServicePlanName'))]"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('AppServicePlanName'))]"
+            ]
+        }
+    ]
+}
