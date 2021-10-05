@@ -32,7 +32,15 @@
                             "name": "[parameters('VirtualSubnets')[copyIndex('subnets')].Name]",
                             "properties": {
                                 "addressPrefix": "[parameters('VirtualSubnets')[copyIndex('subnets')].CIDR]",
-                                "privateEndpointNetworkPolicies": "[parameters('VirtualSubnets')[copyIndex('subnets')].PrivateEndpoint]"
+                                "privateEndpointNetworkPolicies": "[parameters('VirtualSubnets')[copyIndex('subnets')].PrivateEndpoint]",
+                                "delegations": [
+                                    {
+                                        "name": "delegation",
+                                        "properties": {
+                                            "serviceName": "[parameters('VirtualSubnets')[copyIndex('subnets')].Delegation]"
+                                        }
+                                    }
+                                ]
                             }
                         }
                     }
