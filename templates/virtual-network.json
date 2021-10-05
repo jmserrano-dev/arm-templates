@@ -1,0 +1,37 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "VirtualNetworkName": {
+            "type": "string"
+        },
+        "VirtualNetworkCIDR": {
+            "type": "string"
+        },
+        "VirtualSubnets": {
+            "type": "array"
+        }
+    },
+    "resources": [
+        {
+            "name": "[parameters('VirtualNetworkName')]",
+            "type": "Microsoft.Network/VirtualNetworks",
+            "apiVersion": "2020-11-01",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": "[parameters('VirtualNetworkCIDR')]"
+                },
+                "subnets": [
+                    {
+                        "name": "[parameters('VirtualSubnets')[CopyIndex()].Name]",
+                        "properties": {
+                            "addressPrefix": "[parameters('VirtualSubnets')[CopyIndex()].CIDR]"
+                        }
+                    }
+                ],
+                "privateEndpointNetworkPolicies": "[parameters('VirtualSubnets')[CopyIndex()].PrivateEndpoint]"
+            }
+        }
+    ]
+}
