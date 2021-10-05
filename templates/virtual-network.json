@@ -20,7 +20,9 @@
             "location": "[resourceGroup().location]",
             "properties": {
                 "addressSpace": {
-                    "addressPrefixes": "[parameters('VirtualNetworkCIDR')]"
+                    "addressPrefixes": [
+                        "[parameters('VirtualNetworkCIDR')]"
+                    ]
                 },
                 "copy": [
                     {
