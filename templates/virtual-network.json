@@ -10,10 +10,6 @@
         },
         "VirtualSubnets": {
             "type": "array"
-        },
-        "PrivateEndpoint": {
-            "type": "string",
-            "defaultValue": "Disabled"
         }
     },
     "resources": [
@@ -33,12 +29,12 @@
                         "input": {
                             "name": "[parameters('VirtualSubnets')[copyIndex('subnets')].Name]",
                             "properties": {
-                                "addressPrefix": "[parameters('VirtualSubnets')[copyIndex('subnets')].CIDR]"
+                                "addressPrefix": "[parameters('VirtualSubnets')[copyIndex('subnets')].CIDR]",
+                                "privateEndpointNetworkPolicies": "[parameters('VirtualSubnets')[copyIndex('subnets')].PrivateEndpoint]"
                             }
                         }
                     }
-                ],
-                "privateEndpointNetworkPolicies": "[parameters('PrivateEndpoint')]"
+                ]
             }
         }
     ]
