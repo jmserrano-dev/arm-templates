@@ -22,11 +22,15 @@
                 "addressSpace": {
                     "addressPrefixes": "[parameters('VirtualNetworkCIDR')]"
                 },
-                "subnets": [
+                "copy": [
                     {
-                        "name": "[parameters('VirtualSubnets')[CopyIndex()].Name]",
-                        "properties": {
-                            "addressPrefix": "[parameters('VirtualSubnets')[CopyIndex()].CIDR]"
+                        "name": "subnets",
+                        "count": "[length(parameters('VirtualSubnets'))]",
+                        "input": {
+                            "name": "[parameters('VirtualSubnets')[copyIndex()].Name]",
+                            "properties": {
+                                "addressPrefix": "[parameters('VirtualSubnets')[copyIndex()].CIDR]"
+                            }
                         }
                     }
                 ],
