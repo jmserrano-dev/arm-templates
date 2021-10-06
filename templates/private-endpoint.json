@@ -1,0 +1,110 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "VirtualNetworkName": {
+            "type": "string"
+        },
+        "VirtualNetworkSubnetName": {
+            "type": "string"
+        },
+        "PrivateEndpointName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of your Private Endpoint"
+            }
+        },
+        "PrivateLinkConnectionName": {
+            "type": "string",
+            "metadata": {
+                "description": "Link name between your Private Endpoint and your resource"
+            }
+        },
+        "PrivateLinkServiceId": {
+            "type": "string"
+        },
+        "PrivateLinkGroupId": {
+            "type": "string",
+            "allowedValues": [
+                "sites",
+                "sqlServer",
+                "blob"
+            ]
+        },
+        "PrivateDNSZoneName": {
+            "type": "string",
+            "allowedValues": [
+                "privatelink.azurewebsites.net",
+                "privatelink.database.windows.net",
+                "privatelink.blob.core.windows.net"
+            ]
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/privateEndpoints",
+            "apiVersion": "2019-04-01",
+            "name": "[parameters('PrivateEndpointName')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "subnet": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('VirtualNetworkName'), parameters('VirtualNetworkSubnetName'))]"
+                },
+                "privateLinkServiceConnections": [
+                    {
+                        "name": "[parameters('PrivateLinkConnectionName')]",
+                        "properties": {
+                            "privateLinkServiceId": "[parameters('PrivateLinkServiceId')]",
+                            "groupIds": [ "[parameters('PrivateLinkGroupId')]" ]
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2018-09-01",
+            "name": "[parameters('PrivateDNSZoneName')]",
+            "location": "global",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('VirtualNetworkName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+            "apiVersion": "2018-09-01",
+            "name": "[concat(parameters('PrivateDNSZoneName'), '/', parameters('PrivateDNSZoneName'), '-link')]",
+            "location": "global",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', parameters('PrivateDNSZoneName'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('VirtualNetworkName'))]"
+            ],
+            "properties": {
+                "registrationEnabled": false,
+                "virtualNetwork": {
+                    "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('VirtualNetworkName'))]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
+            "apiVersion": "2020-03-01",
+            "name": "[concat(parameters('PrivateEndpointName'),'/dnsgroupname')]",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', parameters('PrivateDNSZoneName'))]",
+                "[resourceId('Microsoft.Network/privateEndpoints' , parameters('PrivateEndpointName'))]"
+            ],
+            "properties": {
+                "privateDnsZoneConfigs": [
+                    {
+                        "name": "config1",
+                        "properties": {
+                            "privateDnsZoneId": "[resourceId('Microsoft.Network/privateDnsZones', parameters('PrivateDNSZoneName'))]"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
