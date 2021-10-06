@@ -16,9 +16,6 @@
             "properties": {
                 "Application_Type": "web",
                 "Request_Source": "IbizaWebAppExtensionCreate"
-            },
-            "tags": {
-                "displayName": "Application Insights"
             }
         }
     ]

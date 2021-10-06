@@ -18,40 +18,77 @@
             "type": "string"
         }
     },
+    "variables": {
+        "WebappDnsNameSite": ".azurewebsites.net"
+    },
     "resources": [
         {
             "type": "Microsoft.Web/sites",
-            "apiVersion": "2018-11-01",
+            "apiVersion": "2019-08-01",
             "name": "[parameters('SiteName')]",
             "location": "[resourceGroup().location]",
-            "tags": {
-                "displayName": "Web App"
-            },
+            "kind": "app",
             "properties": {
-                "siteConfig": {
-                    "name": "[parameters('SiteName')]",
-                    "appSettings": [
-                        {
-                            "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
-                            "value": "false"
-                        },
-                        {
-                            "name": "DOCKER_REGISTRY_SERVER_URL",
-                            "value": "[parameters('AcrUrl')]"
-                        },
-                        {
-                            "name": "DOCKER_REGISTRY_SERVER_USERNAME",
-                            "value": "[parameters('AcrUsername')]"
-                        },
-                        {
-                            "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
-                            "value": "[parameters('AcrPassword')]"
-                        }
-                    ],
-                    "linuxFxVersion": "DOCKER|nginx:alpine"
-                },
+                "enabled": true,
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(parameters('SiteName'), variables('WebappDnsNameSite'))]",
+                        "sslState": "Disabled",
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "[concat(parameters('SiteName'), '.scm', variables('WebappDnsNameSite'))]",
+                        "sslState": "Disabled",
+                        "hostType": "Repository"
+                    }
+                ],
                 "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('AppServicePlanName'))]"
             }
+        },
+        {
+            "type": "Microsoft.Web/sites/config",
+            "apiVersion": "2019-08-01",
+            "name": "[concat(parameters('SiteName'), '/web')]",
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "appSettings": [
+                    {
+                        "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
+                        "value": "false"
+                    },
+                    {
+                        "name": "DOCKER_REGISTRY_SERVER_URL",
+                        "value": "[parameters('AcrUrl')]"
+                    },
+                    {
+                        "name": "DOCKER_REGISTRY_SERVER_USERNAME",
+                        "value": "[parameters('AcrUsername')]"
+                    },
+                    {
+                        "name": "DOCKER_REGISTRY_SERVER_PASSWORD",
+                        "value": "[parameters('AcrPassword')]"
+                    }
+                ],
+                "ftpsState": "AllAllowed",
+                "linuxFxVersion": "DOCKER|nginx:alpine"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('SiteName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "apiVersion": "2019-08-01",
+            "name": "[concat(parameters('SiteName'), '/', parameters('SiteName'), variables('WebappDnsNameSite'))]",
+            "location": "[resourceGroup().location]",
+
+            "properties": {
+                "siteName": "[parameters('SiteName')]",
+                "hostNameType": "Verified"
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('SiteName'))]"
+            ]
         }
     ]
 }

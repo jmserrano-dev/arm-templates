@@ -50,46 +50,34 @@
             "name": "[parameters('SqlName')]",
             "type": "Microsoft.Sql/servers",
             "location": "[resourceGroup().location]",
-            "apiVersion": "2014-04-01-preview",
-            "dependsOn": [],
-            "tags": {
-                "displayName": "Sql Server"
-            },
+            "apiVersion": "2020-02-02-preview",
+            "kind": "v12.0",
             "properties": {
                 "administratorLogin": "[parameters('SqlAdminLogin')]",
-                "administratorLoginPassword": "[parameters('SqlAdminLoginPassword')]"
+                "administratorLoginPassword": "[parameters('SqlAdminLoginPassword')]",
+                "version": "12.0",
+                "publicNetworkAccess": "Disabled"
             },
             "resources": [
-                {
-                    "name": "AllowAllWindowsAzureIps",
-                    "type": "firewallrules",
-                    "location": "[resourceGroup().location]",
-                    "apiVersion": "2014-04-01-preview",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Sql/servers', parameters('SqlName'))]"
-                    ],
-                    "properties": {
-                        "startIpAddress": "0.0.0.0",
-                        "endIpAddress": "0.0.0.0"
-                    }
-                },
                 {
                     "name": "[parameters('DbName')]",
                     "type": "databases",
                     "location": "[resourceGroup().location]",
-                    "apiVersion": "2014-04-01-preview",
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Sql/servers', parameters('SqlName'))]"
-                    ],
-                    "tags": {
-                        "displayName": "SQL DataBase"
+                    "apiVersion": "2020-02-02-preview",
+                    "sku": {
+                        "name": "Basic",
+                        "tier": "Basic",
+                        "capacity": 5
                     },
                     "properties": {
                         "collation": "[parameters('DbCollation')]",
                         "edition": "[parameters('DbEdition')]",
-                        "maxSizeBytes": "1073741824",
+                        "maxSizeBytes": 104857600,
                         "requestedServiceObjectiveName": "[parameters('DbRequestedServiceObjectiveName')]"
-                    }
+                    },
+                    "dependsOn": [
+                        "[resourceId('Microsoft.Sql/servers', parameters('SqlName'))]"
+                    ]
                 }
             ]
         }

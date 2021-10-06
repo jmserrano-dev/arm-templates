@@ -6,13 +6,33 @@
         "AppServicePlanName": {
             "type": "string"
         },
-        "AppSkuName": {
-            "type": "string",
-            "defaultValue": "S1"
+        "AppServicePlanSkuName": {
+            "type": "String",
+            "defaultValue": "P1v2",
+            "metadata": {
+                "description": "SKU name, must be minimum P1v2"
+            }
         },
-        "AppSkuCapacity": {
-            "defaultValue": 1,
-            "type": "int"
+        "AppServicePlanTier": {
+            "type": "String",
+            "defaultValue": "PremiumV2",
+            "metadata": {
+                "description": "SKU tier, must be Premium"
+            }
+        },
+        "AppServicePlanSize": {
+            "type": "String",
+            "defaultValue": "P1v2",
+            "metadata": {
+                "description": "SKU size, must be minimum P1v2"
+            }
+        },
+        "AppServicePlanFamily": {
+            "type": "String",
+            "defaultValue": "P1v2",
+            "metadata": {
+                "description": "SKU family, must be minimum P1v2"
+            }
         }
     },
     "resources": [
@@ -22,12 +42,13 @@
             "name": "[parameters('AppServicePlanName')]",
             "location": "[resourceGroup().location]",
             "sku": {
-                "name": "[parameters('AppSkuName')]",
-                "capacity": "[parameters('AppSkuCapacity')]"
+                "name": "[parameters('AppServicePlanSkuName')]",
+                "tier": "[parameters('AppServicePlanTier')]",
+                "size": "[parameters('AppServicePlanSize')]",
+                "family": "[parameters('AppServicePlanFamily')]",
+                "capacity": 1
             },
-            "tags": {
-                "displayName": "App Service Plan"
-            },
+            "kind": "app",
             "properties": {
                 "reserved": true
             }
