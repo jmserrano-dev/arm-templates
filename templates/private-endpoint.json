@@ -65,36 +65,28 @@
             "type": "Microsoft.Network/privateDnsZones",
             "apiVersion": "2018-09-01",
             "name": "[parameters('PrivateDNSZoneName')]",
-            "location": "global",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks', parameters('VirtualNetworkName'))]"
-            ]
+            "location": "global"
         },
         {
             "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
             "apiVersion": "2018-09-01",
             "name": "[concat(parameters('PrivateDNSZoneName'), '/', parameters('PrivateDNSZoneName'), '-link')]",
             "location": "global",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/privateDnsZones', parameters('PrivateDNSZoneName'))]",
-                "[resourceId('Microsoft.Network/virtualNetworks', parameters('VirtualNetworkName'))]"
-            ],
             "properties": {
                 "registrationEnabled": false,
                 "virtualNetwork": {
                     "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('VirtualNetworkName'))]"
                 }
-            }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', parameters('PrivateDNSZoneName'))]"
+            ]
         },
         {
             "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
             "apiVersion": "2020-03-01",
             "name": "[concat(parameters('PrivateEndpointName'),'/dnsgroupname')]",
             "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/privateDnsZones', parameters('PrivateDNSZoneName'))]",
-                "[resourceId('Microsoft.Network/privateEndpoints' , parameters('PrivateEndpointName'))]"
-            ],
             "properties": {
                 "privateDnsZoneConfigs": [
                     {
@@ -104,7 +96,11 @@
                         }
                     }
                 ]
-            }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/privateDnsZones', parameters('PrivateDNSZoneName'))]",
+                "[resourceId('Microsoft.Network/privateEndpoints' , parameters('PrivateEndpointName'))]"
+            ]
         }
     ]
 }
