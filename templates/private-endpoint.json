@@ -8,13 +8,7 @@
         "VirtualNetworkSubnetName": {
             "type": "string"
         },
-        "PrivateEndpointName": {
-            "type": "string",
-            "metadata": {
-                "description": "Name of your Private Endpoint"
-            }
-        },
-        "PrivateLink": {
+        "PrivateEndpoint": {
             "type": "array"
         },
         "PrivateDNSZoneName": {
@@ -30,27 +24,27 @@
         {
             "type": "Microsoft.Network/privateEndpoints",
             "apiVersion": "2019-04-01",
-            "name": "[parameters('PrivateEndpointName')]",
+            "name": "[parameters('PrivateEndpoint')[copyIndex()].Name]",
             "location": "[resourceGroup().location]",
             "properties": {
                 "subnet": {
                     "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('VirtualNetworkName'), parameters('VirtualNetworkSubnetName'))]"
                 },
-                "copy": [
+                "privateLinkServiceConnections": [
                     {
-                        "name": "privateLinkServiceConnections",
-                        "count": "[length(parameters('PrivateLink'))]",
-                        "input": {
-                            "name": "[parameters('PrivateLink')[copyIndex('privateLinkServiceConnections')].ConnectionName]",
-                            "properties": {
-                                "privateLinkServiceId": "[parameters('PrivateLink')[copyIndex('privateLinkServiceConnections')].ServiceId]",
-                                "groupIds": [
-                                    "[parameters('PrivateLink')[copyIndex('privateLinkServiceConnections')].GroupId]"
-                                ]
-                            }
+                        "name": "[parameters('PrivateEndpoint')[copyIndex()].PrivateLinkConnectionName]",
+                        "properties": {
+                            "privateLinkServiceId": "[parameters('PrivateEndpoint')[copyIndex()].PrivateLinkServiceId]",
+                            "groupIds": [
+                                "[parameters('PrivateEndpoint')[copyIndex()].PrivateLinkGroupId]"
+                            ]
                         }
                     }
                 ]
+            },
+            "copy": {
+                "name": "privateendpointcopy",
+                "count": "[length(parameters('PrivateEndpoint'))]"
             }
         },
         {
@@ -77,7 +71,7 @@
         {
             "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
             "apiVersion": "2020-03-01",
-            "name": "[concat(parameters('PrivateEndpointName'),'/dnsgroupname')]",
+            "name": "[concat(parameters('PrivateEndpoint')[copyIndex()].Name,'/dnsgroupname')]",
             "location": "[resourceGroup().location]",
             "properties": {
                 "privateDnsZoneConfigs": [
@@ -91,8 +85,12 @@
             },
             "dependsOn": [
                 "[resourceId('Microsoft.Network/privateDnsZones', parameters('PrivateDNSZoneName'))]",
-                "[resourceId('Microsoft.Network/privateEndpoints' , parameters('PrivateEndpointName'))]"
-            ]
+                "[resourceId('Microsoft.Network/privateEndpoints' , parameters('PrivateEndpoint')[copyIndex()].Name)]"
+            ],
+            "copy": {
+                "name": "privateendpointcopy",
+                "count": "[length(parameters('PrivateEndpoint'))]"
+            }
         }
     ]
 }
