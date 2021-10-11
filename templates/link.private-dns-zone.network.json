@@ -1,0 +1,37 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "PrivateDNSZoneName": {
+            "type": "string",
+            "allowedValues": [
+                "privatelink.azurewebsites.net",
+                "privatelink.database.windows.net",
+                "privatelink.blob.core.windows.net"
+            ]
+        },
+        "VirtualNetworkName": {
+            "type": "string"
+        },
+        "VirtualNetworkSubscriptionID": {
+            "type": "string"
+        },
+        "VirtualNetworkResourceGroup": {
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
+            "apiVersion": "2018-09-01",
+            "name": "[concat(parameters('PrivateDNSZoneName'), '/', parameters('PrivateDNSZoneName'), '-link')]",
+            "location": "global",
+            "properties": {
+                "registrationEnabled": false,
+                "virtualNetwork": {
+                    "id": "[resourceId(parameters('VirtualNetworkSubscriptionID'), parameters('VirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('VirtualNetworkName'))]"
+                }
+            }
+        }
+    ]
+}
