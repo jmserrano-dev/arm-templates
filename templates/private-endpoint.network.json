@@ -56,10 +56,14 @@
         {
             "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
             "apiVersion": "2018-09-01",
-            "name": "[concat(resourceId(parameters('PrivateDNSZoneNameSubscriptionID'), parameters('PrivateDNSZoneNameResourceGroup'), 'Microsoft.Network/privateDnsZones',parameters('PrivateDNSZoneName')), '/', parameters('PrivateDNSZoneName'), '-link')]",
+            "name": "[concat(parameters('PrivateDNSZoneName'), '/', parameters('PrivateDNSZoneName'), '-link')]",
+            // "name": "[concat(resourceId(parameters('PrivateDNSZoneNameSubscriptionID'), parameters('PrivateDNSZoneNameResourceGroup'), 'Microsoft.Network/privateDnsZones',parameters('PrivateDNSZoneName')), '/', parameters('PrivateDNSZoneName'), '-link')]",
             "location": "global",
             "properties": {
                 "registrationEnabled": false,
+                "": {
+
+                },
                 "virtualNetwork": {
                     "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('VirtualNetworkName'))]"
                 }
