@@ -47,12 +47,12 @@
                 "count": "[length(parameters('PrivateEndpoint'))]"
             }
         },
-        {
-            "type": "Microsoft.Network/privateDnsZones",
-            "apiVersion": "2018-09-01",
-            "name": "[parameters('PrivateDNSZoneName')]",
-            "location": "global"
-        },
+        // {
+        //     "type": "Microsoft.Network/privateDnsZones",
+        //     "apiVersion": "2018-09-01",
+        //     "name": "[parameters('PrivateDNSZoneName')]",
+        //     "location": "global"
+        // },
         {
             "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
             "apiVersion": "2018-09-01",
@@ -63,10 +63,10 @@
                 "virtualNetwork": {
                     "id": "[resourceId('Microsoft.Network/virtualNetworks', parameters('VirtualNetworkName'))]"
                 }
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/privateDnsZones', parameters('PrivateDNSZoneName'))]"
-            ]
+            }
+            // "dependsOn": [
+            //     "[resourceId('Microsoft.Network/privateDnsZones', parameters('PrivateDNSZoneName'))]"
+            // ]
         },
         {
             "type": "Microsoft.Network/privateEndpoints/privateDnsZoneGroups",
@@ -84,7 +84,7 @@
                 ]
             },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/privateDnsZones', parameters('PrivateDNSZoneName'))]",
+                // "[resourceId('Microsoft.Network/privateDnsZones', parameters('PrivateDNSZoneName'))]",
                 "[resourceId('Microsoft.Network/privateEndpoints' , parameters('PrivateEndpoint')[copyIndex()].Name)]"
             ],
             "copy": {

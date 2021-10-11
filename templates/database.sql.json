@@ -6,13 +6,6 @@
         "SqlName": {
             "type": "string"
         },
-        "SqlAdminLogin": {
-            "type": "string",
-            "minLength": 1
-        },
-        "SqlAdminLoginPassword": {
-            "type": "securestring"
-        },
         "DbName": {
             "type": "string",
             "minLength": 1
@@ -47,39 +40,21 @@
     },
     "resources": [
         {
-            "name": "[parameters('SqlName')]",
-            "type": "Microsoft.Sql/servers",
+            "name": "[concat(parameters('SqlName'), '/', parameters('DbName'))]",
+            "type": "Microsoft.Sql/servers/databases",
             "location": "[resourceGroup().location]",
             "apiVersion": "2020-02-02-preview",
-            "kind": "v12.0",
-            "properties": {
-                "administratorLogin": "[parameters('SqlAdminLogin')]",
-                "administratorLoginPassword": "[parameters('SqlAdminLoginPassword')]",
-                "version": "12.0",
-                "publicNetworkAccess": "Disabled"
+            "sku": {
+                "name": "Basic",
+                "tier": "Basic",
+                "capacity": 5
             },
-            "resources": [
-                {
-                    "name": "[parameters('DbName')]",
-                    "type": "databases",
-                    "location": "[resourceGroup().location]",
-                    "apiVersion": "2020-02-02-preview",
-                    "sku": {
-                        "name": "Basic",
-                        "tier": "Basic",
-                        "capacity": 5
-                    },
-                    "properties": {
-                        "collation": "[parameters('DbCollation')]",
-                        "edition": "[parameters('DbEdition')]",
-                        "maxSizeBytes": 104857600,
-                        "requestedServiceObjectiveName": "[parameters('DbRequestedServiceObjectiveName')]"
-                    },
-                    "dependsOn": [
-                        "[resourceId('Microsoft.Sql/servers', parameters('SqlName'))]"
-                    ]
-                }
-            ]
+            "properties": {
+                "collation": "[parameters('DbCollation')]",
+                "edition": "[parameters('DbEdition')]",
+                "maxSizeBytes": 104857600,
+                "requestedServiceObjectiveName": "[parameters('DbRequestedServiceObjectiveName')]"
+            }
         }
     ]
 }
