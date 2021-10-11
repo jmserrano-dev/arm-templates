@@ -14,22 +14,8 @@
                 "description": "Name of your Private Endpoint"
             }
         },
-        "PrivateLinkConnectionName": {
-            "type": "string",
-            "metadata": {
-                "description": "Link name between your Private Endpoint and your resource"
-            }
-        },
-        "PrivateLinkServiceId": {
-            "type": "string"
-        },
-        "PrivateLinkGroupId": {
-            "type": "string",
-            "allowedValues": [
-                "sites",
-                "sqlServer",
-                "blob"
-            ]
+        "PrivateLink": {
+            "type": "array"
         },
         "PrivateDNSZoneName": {
             "type": "string",
@@ -50,12 +36,18 @@
                 "subnet": {
                     "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('VirtualNetworkName'), parameters('VirtualNetworkSubnetName'))]"
                 },
-                "privateLinkServiceConnections": [
+                "copy": [
                     {
-                        "name": "[parameters('PrivateLinkConnectionName')]",
-                        "properties": {
-                            "privateLinkServiceId": "[parameters('PrivateLinkServiceId')]",
-                            "groupIds": [ "[parameters('PrivateLinkGroupId')]" ]
+                        "name": "privateLinkServiceConnections",
+                        "count": "[length(parameters('PrivateLink'))]",
+                        "input": {
+                            "name": "[parameters('PrivateLink')[copyIndex('privateLinkServiceConnections')].ConnectionName]",
+                            "properties": {
+                                "privateLinkServiceId": "[parameters('PrivateLink')[copyIndex('privateLinkServiceConnections')].ServiceId]",
+                                "groupIds": [
+                                    "[parameters('PrivateLink')[copyIndex('privateLinkServiceConnections')].GroupId]"
+                                ]
+                            }
                         }
                     }
                 ]
