@@ -1,0 +1,32 @@
+
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "SqlName": {
+            "type": "string"
+        },
+        "SqlAdminLogin": {
+            "type": "string",
+            "minLength": 1
+        },
+        "SqlAdminLoginPassword": {
+            "type": "securestring"
+        }
+    },
+    "resources": [
+        {
+            "name": "[parameters('SqlName')]",
+            "type": "Microsoft.Sql/servers",
+            "apiVersion": "2020-02-02-preview",
+            "location": "[resourceGroup().location]",
+            "kind": "v12.0",
+            "properties": {
+                "administratorLogin": "[parameters('SqlAdminLogin')]",
+                "administratorLoginPassword": "[parameters('SqlAdminLoginPassword')]",
+                "version": "12.0",
+                "publicNetworkAccess": "Disabled"
+            }
+        }
+    ]
+}

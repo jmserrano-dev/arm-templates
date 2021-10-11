@@ -1,0 +1,58 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "StorageAccountName": {
+            "type": "string"
+        },
+        "StorageBlobSkuName": {
+            "type": "string",
+            "defaultValue": "Standard_LRS"
+        },
+        "StorageBlobCorsAllowedUris": {
+            "type": "array",
+            "defaultValue": [
+                "http://localhost:5000"
+            ]
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices",
+            "apiVersion": "2019-04-01",
+            "name": "[concat(parameters('StorageAccountName'), '/default')]",
+            "sku": {
+                "name": "[parameters('StorageBlobSkuName')]"
+            },
+            "properties": {
+                "cors": {
+                    "corsRules": [
+                        {
+                            "allowedOrigins": "[parameters('StorageBlobCorsAllowedUris')]",
+                            "allowedMethods": [
+                                "PUT",
+                                "OPTIONS",
+                                "POST",
+                                "MERGE",
+                                "HEAD",
+                                "GET",
+                                "DELETE",
+                                "PATCH"
+                            ],
+                            "maxAgeInSeconds": 0,
+                            "exposedHeaders": [
+                                "*"
+                            ],
+                            "allowedHeaders": [
+                                "*"
+                            ]
+                        }
+                    ]
+                },
+                "deleteRetentionPolicy": {
+                    "enabled": false
+                }
+            }
+        }
+    ]
+}

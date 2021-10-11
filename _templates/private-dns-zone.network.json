@@ -1,0 +1,23 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "Name": {
+            "type": "string",
+            "allowedValues": [
+                "privatelink.azurewebsites.net",
+                "privatelink.database.windows.net",
+                "privatelink.blob.core.windows.net"
+            ]
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Network/privateDnsZones",
+            "apiVersion": "2018-09-01",
+            "name": "[parameters('Name')]",
+            "location": "global",
+            "properties": {}
+        }
+    ]
+}

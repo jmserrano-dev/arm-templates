@@ -1,0 +1,57 @@
+
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "AppServicePlanName": {
+            "type": "string"
+        },
+        "AppServicePlanSkuName": {
+            "type": "String",
+            "defaultValue": "P1v2",
+            "metadata": {
+                "description": "SKU name, must be minimum P1v2"
+            }
+        },
+        "AppServicePlanTier": {
+            "type": "String",
+            "defaultValue": "PremiumV2",
+            "metadata": {
+                "description": "SKU tier, must be Premium"
+            }
+        },
+        "AppServicePlanSize": {
+            "type": "String",
+            "defaultValue": "P1v2",
+            "metadata": {
+                "description": "SKU size, must be minimum P1v2"
+            }
+        },
+        "AppServicePlanFamily": {
+            "type": "String",
+            "defaultValue": "P1v2",
+            "metadata": {
+                "description": "SKU family, must be minimum P1v2"
+            }
+        }
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2018-02-01",
+            "name": "[parameters('AppServicePlanName')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "[parameters('AppServicePlanSkuName')]",
+                "tier": "[parameters('AppServicePlanTier')]",
+                "size": "[parameters('AppServicePlanSize')]",
+                "family": "[parameters('AppServicePlanFamily')]",
+                "capacity": 1
+            },
+            "kind": "app",
+            "properties": {
+                "reserved": true
+            }
+        }
+    ]
+}
