@@ -3,6 +3,9 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "PrivateDNSZoneName": {
+            "type": "string"
+        },
+        "PrivateDNSZoneType": {
             "type": "string",
             "allowedValues": [
                 "privatelink.azurewebsites.net",
@@ -24,7 +27,7 @@
         {
             "type": "Microsoft.Network/privateDnsZones/virtualNetworkLinks",
             "apiVersion": "2018-09-01",
-            "name": "[concat(parameters('PrivateDNSZoneName'), '/', parameters('PrivateDNSZoneName'), '-link')]",
+            "name": "[concat(parameters('PrivateDNSZoneType'), '/', parameters('PrivateDNSZoneName'))]",
             "location": "global",
             "properties": {
                 "registrationEnabled": false,
