@@ -11,7 +11,7 @@
         "PrivateEndpoint": {
             "type": "array"
         },
-        "PrivateDNSZoneName": {
+        "PrivateDNSZoneType": {
             "type": "string",
             "allowedValues": [
                 "privatelink.azurewebsites.net",
@@ -63,7 +63,7 @@
                     {
                         "name": "config1",
                         "properties": {
-                            "privateDnsZoneId": "[resourceId(parameters('PrivateDNSZoneNameSubscriptionID'), parameters('PrivateDNSZoneNameResourceGroup'), 'Microsoft.Network/privateDnsZones', parameters('PrivateDNSZoneName'))]"
+                            "privateDnsZoneId": "[resourceId(parameters('PrivateDNSZoneNameSubscriptionID'), parameters('PrivateDNSZoneNameResourceGroup'), 'Microsoft.Network/privateDnsZones', parameters('PrivateDNSZoneType'))]"
                         }
                     }
                 ]
